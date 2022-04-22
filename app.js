@@ -1,17 +1,38 @@
 let view = new ol.View({
-    center: [8160363.497086522, 2551060.245299654],
-    zoom: 9.496452477891525
+    center: [73.37907973652675, 22.331480705369238],
+    zoom: 9.496452477891525,
+    projection: 'EPSG:4326',
+
 });
 
+var button = document.createElement('button');
+button.innerHTML = 'C';
+button.id = 'mybtn'
+
+var myCustomOlControl = function (e) {
+    clickCordinateFun();
+};
+
+//button.addEventListener('click', myCustomOlControl, false);
+
+var element = document.createElement('div');
+element.className = 'rotate-north ol-unselectable ol-control';
+element.appendChild(button);
+
+var myCustomOlControl = new ol.control.Control({
+    element: element
+});
 var map = new ol.Map({
     target: 'myMap',
-    view: view
+    view: view,
+    keyboardEventTarget:document
 });
 
 const osm = new ol.layer.Tile({
     source: new ol.source.OSM()
 });
 
+map.addControl(myCustomOlControl);
 map.addLayer(osm);
 
 // set style to the polygon feature
@@ -52,9 +73,8 @@ map.addLayer(line);
 
 
 var pointTextStyle = function (feature) {
-    debugger;
     var ftype = feature.getGeometry().getType();
-    var textf = feature.get('station_na');
+    var textf = feature.get('station_ty');
     var fnamestr = textf.toString();
 
 
@@ -137,3 +157,40 @@ var point = new ol.layer.Vector({
 })
 map.addLayer(point);
 
+
+var popupcordinatecontainer = document.getElementById('popupcordinate');
+
+onclickcodinate = 0;
+document.getElementById('mybtn').addEventListener('click', function () {
+    if (onclickcodinate == 0) {
+        debugger;
+        onclickcodinate = 1;
+        mybtn.style.color = 'yellow';
+        document.getElementById('myMap').style.cursor = "help";
+        clickCordinateFun();
+    }
+    else {
+        debugger;
+        onclickcodinate = 0;
+        mybtn.style.color = 'white';
+        document.getElementById('myMap').style.cursor = 'default';
+        clickCordinateFun();
+        popupcordinatecontainer.style.display = "none";
+       
+    }
+});
+
+var overlaypopup = new ol.Overlay({
+    element: popupcordinatecontainer,
+    positioning: 'top-left'
+})
+map.addOverlay(overlaypopup);
+function clickCordinateFun() {
+    map.on('click', function (e) {
+        if (onclickcodinate == 1) {
+            var clickedCordinate = e.coordinate;
+            overlaypopup.setPosition(clickedCordinate);
+            popupcordinatecontainer.innerHTML = 'You Clicked at:' + clickedCordinate;
+        }
+    })
+}
