@@ -1,4 +1,23 @@
-#myMap{
-    width: 100%;
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+#myMap {
+    width: 100vw;
     height: 100vh;
+}
+
+/* Custom control */
+.rotate-north {
+    top: 65px;
+    left: .5em;
+}
+
+.ol-touch .rotate-north {
+    top: 80px;
 }
